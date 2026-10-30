@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "magic-stacks",
+  "main": "./src/entry-server.tsx",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "vars": {
+    // Claude Haiku model ID (override per environment if needed)
+    "ANTHROPIC_MODEL": "claude-haiku-5-5"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "magic-stacks",
+      "database_id": "31576fab-54c2-4436-8b60-27d8db2d407a",
+      // Local dev (vite dev / wrangler --local) keeps using its own database.
+      "preview_database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    // Parsed book text (one JSON per book), fetched from Project Gutenberg.
+    { "binding": "BUCKET", "bucket_name": "magic-stacks" }
+  ]
+}
