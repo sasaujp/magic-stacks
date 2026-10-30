@@ -41,6 +41,9 @@ export default function ChapterPage() {
     }
   };
   const [kwic, setKwic] = createSignal<string | null>(null);
+  /** The sentence under the pointer, highlighted on both the source and translation side. */
+  const [hoveredId, setHoveredId] = createSignal<number | null>(null);
+  const hoverProps = (id: number) => ({ onMouseEnter: () => setHoveredId(id), onMouseLeave: () => setHoveredId(h => (h === id ? null : h)) });
 
   const selectedId = () => (search.s ? Number(search.s) : null);
   /** Sentences that can be worked on (headings and uncaptioned images are shown but not selected). */
@@ -92,10 +95,11 @@ export default function ChapterPage() {
       role="button"
       tabIndex={0}
       class={cn(
-        "cursor-pointer rounded-sm transition-colors hover:bg-accent",
-        selectedId() === p.s.id && "bg-highlight text-highlight-foreground hover:bg-highlight",
+        "cursor-pointer rounded-sm transition-colors",
+        selectedId() === p.s.id ? "bg-highlight text-highlight-foreground" : hoveredId() === p.s.id && "bg-accent",
         !p.v.translations[p.s.id] && mode() !== "source" && "text-foreground/80",
       )}
+      {...hoverProps(p.s.id)}
       onClick={() => select(p.s.id)}
       onKeyDown={e => e.key === "Enter" && select(p.s.id)}
     >
@@ -116,7 +120,12 @@ export default function ChapterPage() {
       <span
         role="button"
         tabIndex={-1}
-        class={cn("cursor-pointer rounded-sm hover:bg-accent", selectedId() === p.s.id && "bg-highlight text-highlight-foreground hover:bg-highlight", tr()?.status === "ai" && "text-foreground/75")}
+        class={cn(
+          "cursor-pointer rounded-sm transition-colors",
+          selectedId() === p.s.id ? "bg-highlight text-highlight-foreground" : hoveredId() === p.s.id && "bg-accent",
+          tr()?.status === "ai" && "text-foreground/75",
+        )}
+        {...hoverProps(p.s.id)}
         onClick={() => select(p.s.id)}
       >
         {tr()?.text ?? <span class="text-muted-foreground/50" title="未訳">…</span>}
